@@ -2,8 +2,13 @@ const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require('uuid');
 const express = require('express');
 const { Usuario } = require('../models');
+const { registrarUsuario, loginUsuario } = require("../controllers/authController");
 
 const router = express.Router();
+
+
+router.post('/register', registrarUsuario);
+router.post('/login', loginUsuario);
 
 router.get('/', async (req, res) => {
   try {
