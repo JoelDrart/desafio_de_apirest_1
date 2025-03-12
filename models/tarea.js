@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
             estado: DataTypes.STRING,
             fecha_limite: DataTypes.DATE,
             proyectoId: DataTypes.INTEGER,
-            usuarioId: DataTypes.INTEGER,
+            usuarioId: DataTypes.STRING, //cambiar a STRING en la migration
         },
         {
             sequelize,

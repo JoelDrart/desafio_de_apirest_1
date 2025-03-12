@@ -63,12 +63,13 @@ router.delete('/:id', authMiddleware,async (req, res) => {
 
 router.post('/:idProyecto/tasks',authMiddleware, async (req, res) => {
     const { idProyecto } = req.params;
+    const { id } = req.user;
     const { titulo, descripcion, prioridad, estado, fecha_limite } = req.body; // Falta usuarioId
     if (!titulo || !descripcion || !prioridad || !estado || !fecha_limite) {
         return res.status(400).json({ message: 'Falta información' });
     }
     try{
-        const tarea = await Tarea.create({ titulo, descripcion, prioridad, estado, fecha_limite, proyectoId: idProyecto });
+        const tarea = await Tarea.create({ titulo, descripcion, prioridad, estado, fecha_limite, proyectoId: idProyecto, usuarioId: id });
         res.status(201).json({message: 'Tarea creada'});
     }catch (error){
         console.error(error);
@@ -81,7 +82,21 @@ router.get('/:idProyecto/tasks', authMiddleware, async (req, res) => {
     try{
         const tareas = await Tarea.findAll({
             where: { proyectoId: idProyecto},
-            attributes: ['id', 'titulo', 'descripcion', 'prioridad', 'estado', 'fecha_limite']
+            attributes: ['id', 'usuarioId', 'titulo', 'descripcion', 'prioridad', 'estado', 'fecha_limite']
+        })
+        res.json(tareas);
+    }catch (error){
+        console.error(error);
+        res.status(500).json({message: 'Server error'});
+    }
+});
+
+router.get('/:idProyecto/tasks/:idUser', authMiddleware, async (req, res) => {
+    const { idProyecto, idUser } = req.params;
+    try{
+        const tareas = await Tarea.findAll({
+            where: { proyectoId: idProyecto, usuarioId: idUser },
+            attributes: ['id', 'usuarioId', 'titulo', 'descripcion', 'prioridad', 'estado', 'fecha_limite']
         })
         res.json(tareas);
     }catch (error){
@@ -96,7 +111,7 @@ router.get('/:idProyecto/tasks/:idTarea', authMiddleware, async (req, res) => {
         const tarea
         = await Tarea.findOne({
             where: { id: idTarea, proyectoId: idProyecto },
-            attributes: ['id', 'titulo', 'descripcion', 'prioridad', 'estado', 'fecha_limite']
+            attributes: ['id', 'usuarioId','titulo', 'descripcion', 'prioridad', 'estado', 'fecha_limite']
         })
         res.json(tarea);
     }catch (error){
@@ -135,12 +150,13 @@ router.delete('/:idProyecto/tasks/:idTarea', authMiddleware, async (req, res) =>
 
 router.post('/:idProyecto/tasks/:idTarea/comments', authMiddleware, async (req, res) => {
     const { idTarea } = req.params;
+    const { id } = req.user;
     const { contenido } = req.body; // Falta usuarioId
     if (!contenido) {
         return res.status(400).json({ message: 'Falta información' });
     }
     try{
-        const comentario = await Comentario.create({ contenido, tareaId: idTarea });
+        const comentario = await Comentario.create({ contenido, tareaId: idTarea, usuarioId: id });
         res.status(201).json({message: 'Comentario creado'});
     }catch (error){
         console.error(error);
@@ -153,7 +169,7 @@ router.get('/:idProyecto/tasks/:idTarea/comments', authMiddleware, async (req, r
     try{
         const comentarios = await Comentario.findAll({
             where: { tareaId: idTarea }, //falta usuarioId
-            attributes: ['id', 'contenido', 'tareaId']
+            attributes: ['id', 'usuarioId', 'contenido', 'tareaId']
         })
         res.json(comentarios);
     }catch (error){
@@ -168,7 +184,7 @@ router.get('/:idProyecto/tasks/:idTarea/comments/:idComentario', authMiddleware,
         const comentario
         = await Comentario.findOne({
             where: { id: idComentario, tareaId: idTarea },
-            attributes: ['id', 'contenido', 'tareaId']
+            attributes: ['id', 'usuarioId', 'contenido', 'tareaId']
         })
         res.json(comentario);
     }catch (error){
@@ -183,7 +199,7 @@ router.get('/:idProyecto/tasks/:idTarea/comments/:idUsuario', authMiddleware, as
         const comentarios
         = await Comentario.findAll({
             where: { tareaId: idTarea, usuarioId: idUsuario },
-            attributes: ['id', 'contenido', 'tareaId']
+            attributes: ['id', 'usuarioId', 'contenido', 'tareaId']
         })
         res.json(comentarios);
     }catch (error){

@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Comentario.init({
     contenido: DataTypes.TEXT,
-    usuarioId: DataTypes.INTEGER,
+    usuarioId: DataTypes.STRING, //cambiar a STRING en la migration
     tareaId: DataTypes.INTEGER
   }, {
     sequelize,

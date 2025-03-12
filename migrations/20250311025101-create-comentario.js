@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.TEXT
       },
       usuarioId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID
       },
       tareaId: {
         type: Sequelize.INTEGER
